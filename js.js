@@ -11,6 +11,7 @@ mainImage.src = "pac.png"
 
 var score = 0;
 var gscore = 0;
+var ghost = false;
 
 var player = {
 	x : 50,
@@ -23,7 +24,15 @@ var player = {
 var enemy = {
 	x : 200,
 	y : 150,
-	speed : 2
+	speed : 2,
+	moving : 0,
+	dirx : 0,
+	diry : 0
+}
+var powerdot = {
+	x : 10,
+	y : 10,
+	powerup : false
 }
 
 var keyclick = {};
@@ -73,15 +82,68 @@ function playgame() {
 	requestAnimationFrame(playgame);
 }
 
+function myNum(n){
+	return Math.floor(Math.random() * n);
+}
+
 function render() {
 	ctx.fillStyle = "black";
 	ctx.fillRect(0,0, canvas.width, canvas.height); 
+
+	if(!powerdot.powerup){
+		powerdot.x = myNum(420)+30;
+		powerdot.y = myNum(250);
+		powerdot.powerup = true;
+	}
+
+	if(!ghost){
+		enemy.ghost = myNum(5)*64;
+		enemy.x = myNum(450);
+		enemy.y = myNum(250)+30;
+		ghost = true;
+	}
+	if(enemy.moving < 0){
+		enemy.moving = (myNum(20)*3)+myNum(1);
+		enemy.speed = myNum(3)+1;
+		enemy.dirx = 0;
+		enemy.diry = 0;
+
+		if(enemy.moving % 2){
+			if(player.x < enemy.x){
+				enemy.dirx = -enemy.speed;
+			}else{
+				enemy.dirx = enemy.speed;
+			}
+		}else{
+			if(player.y < enemy.y){
+				enemy.diry = -enemy.speed;
+			}else{
+				enemy.diry = enemy.speed;
+			}
+		}
+	}
+	enemy.moving--;
+	enemy.x = enemy.x + enemy.dirx;
+	enemy.y = enemy.y + enemy.diry;
+
+	if(enemy.x >= (canvas.width-32)){enemy.x=0;}
+	if(enemy.y >= (canvas.height-32)){enemy.y=0;}
+	if(enemy.x < 0){enemy.x = (canvas.width-32);}
+	if(enemy.y < 0){enemy.y = (canvas.height-32);}
+
+	if(powerdot.powerup){
+		ctx.fillStyle = "#ffffff";
+		ctx.beginPath();
+		ctx.arc(powerdot.x, powerdot.y, 5, 0, Math.PI*2, true);
+		ctx.closePath();
+		ctx.fill();
+	}
 
 	ctx.font = "20px Verdana";
 	ctx.fillStyle = "white";
 	ctx.fillText("Pacman: " + score+" vs Ghost:"+gscore, 2,18);
 
-	ctx.drawImage(mainImage, 0, 0, 32, 32, enemy.x, enemy.y, 32,32);
+	ctx.drawImage(mainImage, enemy.ghost, 0, 32, 32, enemy.x, enemy.y, 32,32);
 	ctx.drawImage(mainImage, player.pacmouth, player.pacdir, 32, 32, player.x, player.y, player.psize,player.psize);
 }
 
