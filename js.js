@@ -19,7 +19,7 @@ var player = {
 	pacmouth : 320,
 	pacdir : 0,
 	psize : 40,
-	speed : 2
+	speed : 5
 }
 var enemy = {
 	x : 200,
@@ -32,9 +32,10 @@ var enemy = {
 var powerdot = {
 	x : 10,
 	y : 10,
-	powerup : false
+	powerup : false,
+	pCountDown : 0,
+	ghostNum : 0
 }
-
 var keyclick = {};
 document.addEventListener("keydown", function (event) {
 	keyclick[event.keyCode]=true;
@@ -131,10 +132,22 @@ function render() {
 	if(enemy.x < 0){enemy.x = (canvas.width-32);}
 	if(enemy.y < 0){enemy.y = (canvas.height-32);}
 
+
+	//Collision detection
+	if(player.x <= powerdot.x && powerdot.x <= (player.x+32) && player.y <= powerdot.y && powerdot.y <= (player.y+32)){
+		console.log('hit');
+		powerdot.powerup = false;
+		powerdot.pCountDown = 500;
+		powerdot.ghostNum = enemy.ghostNum;
+		enemy.ghostNum = 384;
+		powerdot.x = 0;
+		powerdot.y = 0;
+	}
+
 	if(powerdot.powerup){
 		ctx.fillStyle = "#ffffff";
 		ctx.beginPath();
-		ctx.arc(powerdot.x, powerdot.y, 5, 0, Math.PI*2, true);
+		ctx.arc(powerdot.x, powerdot.y, 10, 0, Math.PI*2, true);
 		ctx.closePath();
 		ctx.fill();
 	}
