@@ -3,12 +3,40 @@
 <head>
 	<title>Game Tutorial</title>
 	<style>
+		#button{
+			position: absolute;
+			background: black;
+			padding: 15px;
+			color: white;
+			font-size: 20px;		
+			font-weight: bold;
+			left: 46%;
+			top: 45%;
+		}
+		#again{
+			position: absolute;
+			background: black;
+			padding: 10px;
+			color: white;
+			font-size: 20px;		
+			font-weight: bold;
+			left: 61%;
+			top: 70%;
+		}
 		canvas{
-			border: solid 1px blue;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			margin-left: -300px;
+			margin-top: -200px; 
+			border: solid 2px white;
+			z-index: -1;
 		}
 	</style>
 </head>
-<body>
+<body style="background: url(background.jpg);">
+	<button id="button" onclick="onStart()">Start Game</button>
+	<button id="again" onclick="onRestart()">Start Again</button>
 	<script src="js.js"></script>
 </body>
 </html>

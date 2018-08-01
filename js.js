@@ -3,11 +3,12 @@
 	document.body.appendChild(canvas);
 	canvas.width = 600;
 	canvas.height = 400;
-
 	mainImage = new Image();
-	mainImage.ready = false;
-	mainImage.onload = checkReady;
-	mainImage.src = "pac.png"
+	mainImage.ready = true;
+	mainImage.src = "pac.png";
+	var btn = document.getElementById("button");
+	var res = document.getElementById("again");
+	res.style.visibility = "hidden";
 
 	var score = 0;
 	var gscore = 0;
@@ -103,9 +104,18 @@
 		render();
 	}
 
-	function checkReady() {
-		this.ready = true;
+	function removeCanvas(){
+		ctx.clearRect(0,0,canvas.width, canvas.height);
+		mainImage = null;
+	}
+
+	function onRestart(){
+		document.location.reload();
+	}
+
+	function onStart(){
 		playgame();
+		btn.style.visibility = "hidden";
 	}
 
 	function playgame() {
@@ -209,7 +219,6 @@
 
 		//Collision detection ghost 1
 		if(player.x <= (enemy.x+26) && enemy.x <= (player.x+26) && player.y <= (enemy.y+26) && enemy.y <= (player.y+32)){
-			console.log('ghost');
 			if(powerdot.ghosteat){
 				score++;
 			}else{
@@ -224,7 +233,6 @@
 
 		//Collision detection ghost 2
 		if(player.x <= (enemy2.x+26) && enemy2.x <= (player.x+26) && player.y <= (enemy2.y+26) && enemy2.y <= (player.y+32)){
-			console.log('ghost');
 			if(powerdot.ghosteat){
 				score++;
 			}else{
@@ -240,7 +248,6 @@
 
 		//Collision detection powerup
 		if(player.x <= powerdot.x && powerdot.x <= (player.x+32) && player.y <= powerdot.y && powerdot.y <= (player.y+32)){
-			console.log('hit');
 			powerdot.powerup = false;
 			powerdot.pCountDown = 500;
 			powerdot.ghostNum = enemy.ghostNum;
@@ -289,15 +296,29 @@
 				}
 			}
 			
-
 		//write score
 		ctx.font = "20px Verdana";
 		ctx.fillStyle = "white";
 		ctx.fillText("Pacman: " + score+" vs Ghost:"+gscore, 2,18);
+
+		//check who wins
+		if(gscore == 3 || score == 3){
+			removeCanvas();
+			res.style.visibility = "visible";
+			if(gscore > score){
+				ctx.textAlign = "center";
+				ctx.fillStyle = "";
+				ctx.fillText("Ghost wins", 300, 18);
+				
+			}
+			else{
+				ctx.fillStyle = "";
+				ctx.fillText("Pacman wins",300, 18);
+			}
+		}
 
 		//draw characters
 		ctx.drawImage(mainImage, enemy2.ghostNum, enemy2.flash, 32, 32, enemy2.x, enemy2.y, 32,32);
 		ctx.drawImage(mainImage, enemy.ghostNum, enemy.flash, 32, 32, enemy.x, enemy.y, 32,32);
 		ctx.drawImage(mainImage, player.pacmouth, player.pacdir, 32, 32, player.x, player.y, player.psize,player.psize);
 	}
-
